@@ -82,4 +82,15 @@ public interface FiniteStateMachine {
      */
     State fire(Event event) throws FiniteStateMachineException;
 
+    /**
+     * Return the context from current FSM.
+     * @return
+     */
+    Context<?> getContext();
+
+    /**
+     * Set context for current FSM.
+     * @param ctx
+     */
+    void setContext(Context<?> ctx);
 }
