@@ -51,6 +51,11 @@ final class FiniteStateMachineImpl implements FiniteStateMachine {
         finalStates = new HashSet<>();
     }
 
+    FiniteStateMachineImpl(final Set<State> states, final State initialState, final Context ctx) {
+        this(states, initialState);
+        this.context = ctx;
+    }
+
     /**
      * {@inheritDoc}
      */

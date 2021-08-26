@@ -7,7 +7,8 @@ package org.jeasy.states.api;
  * @param <S> Source State.
  * @param <T> Target State.
  * @param <C> Context associated with current FSM.
+ * @param <D> Context data type.
  */
-public interface StatefulEventHandler<E extends Event, S extends State, T extends State, C extends Context> extends EventHandler<E> {
+public interface StatefulEventHandler<E extends Event, S extends State, T extends State, C extends Context<D>, D> extends EventHandler<E> {
     void handleEvent(E event, S sourceState, T targetState, C ctx) throws Exception;
 }
