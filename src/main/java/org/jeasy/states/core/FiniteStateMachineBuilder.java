@@ -23,6 +23,7 @@
  */
 package org.jeasy.states.core;
 
+import org.jeasy.states.api.Context;
 import org.jeasy.states.api.FiniteStateMachine;
 import org.jeasy.states.api.State;
 import org.jeasy.states.api.Transition;
@@ -116,6 +117,17 @@ public class FiniteStateMachineBuilder {
         for (State finalState : finalStates) {
             registerFinalState(finalState);
         }
+        return this;
+    }
+
+    /**
+     * Sets the initial Context for FSM, most likely it's persist during the
+     * whole lifecycle but still safe to change with transitions.
+     * @param ctx context object to set
+     * @return a configured FSM Builder instance
+     */
+    public FiniteStateMachineBuilder setInitialContext(final Context ctx) {
+        finiteStateMachine.setContext(ctx);
         return this;
     }
 

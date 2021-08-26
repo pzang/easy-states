@@ -41,6 +41,7 @@ final class FiniteStateMachineImpl implements FiniteStateMachine {
     private final Set<Transition> transitions;
     private Event lastEvent;
     private Transition lastTransition;
+    private Context<?> context;
 
     FiniteStateMachineImpl(final Set<State> states, final State initialState) {
         this.states = states;
@@ -48,6 +49,11 @@ final class FiniteStateMachineImpl implements FiniteStateMachine {
         currentState = initialState;
         transitions = new HashSet<>();
         finalStates = new HashSet<>();
+    }
+
+    FiniteStateMachineImpl(final Set<State> states, final State initialState, final Context ctx) {
+        this(states, initialState);
+        this.context = ctx;
     }
 
     /**
@@ -70,13 +76,17 @@ final class FiniteStateMachineImpl implements FiniteStateMachine {
         for (Transition transition : transitions) {
             if (
                     currentState.equals(transition.getSourceState()) && //fsm is in the right state as expected by transition definition
-                    transition.getEventType().equals(event.getClass()) && //fired event type is as expected by transition definition
-                    states.contains(transition.getTargetState()) //target state is defined
-                    ) {
+                            transition.getEventType().equals(event.getClass()) && //fired event type is as expected by transition definition
+                            states.contains(transition.getTargetState()) //target state is defined
+            ) {
                 try {
+                    EventHandler currentHandler = transition.getEventHandler();
                     //perform action, if any
-                    if (transition.getEventHandler() != null) {
-                        transition.getEventHandler().handleEvent(event);
+                    if (currentHandler != null) {
+                        if (currentHandler instanceof StatefulEventHandler)
+                            ((StatefulEventHandler) currentHandler).handleEvent(event, transition.getSourceState(), transition.getTargetState(), context);
+                        else
+                            transition.getEventHandler().handleEvent(event);
                     }
                     //transit to target state
                     currentState = transition.getTargetState();
@@ -93,6 +103,16 @@ final class FiniteStateMachineImpl implements FiniteStateMachine {
             }
         }
         return currentState;
+    }
+
+    @Override
+    public Context<?> getContext() {
+        return this.context;
+    }
+
+    @Override
+    public void setContext(Context<?> ctx) {
+        this.context = ctx;
     }
 
     void registerTransition(final Transition transition) {
